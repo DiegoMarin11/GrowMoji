@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View, Text } from "react-native";
 export default function MainPage() {
-  return <View>hola</View>;
+  return <View><Text>hola</Text></View>;
 }

@@ -2,6 +2,10 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useState } from "react";
 import LogIn from "./logIn";
 
+export const options = {
+  headerShown: false,
+};
+
 export default function Index() {
   const [showLogin, setShowLogin] = useState(false); //default
 
