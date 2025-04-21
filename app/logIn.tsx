@@ -1,10 +1,28 @@
-import { View, Text, StyleSheet, Pressable, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  TextInput,
+  Alert,
+} from "react-native";
 import { useRouter } from "expo-router";
+import { useState } from "react";
+import { Login } from "../apiClient/interface"
 export default function LogIn() {
   const router = useRouter();
+  const [usernameOrEmail, setUsernameOrEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    router.push("/mainPage");
+  const handleLogin = async () => {
+    const result = await Login(usernameOrEmail, password);
+    
+    if (result.success) {
+      router.push("/mainPage");
+    } else {
+      alert("Error al iniciar sesión: " + result.error);
+    }
+
   };
 
   return (
@@ -15,6 +33,8 @@ export default function LogIn() {
         style={styles.input}
         placeholder="Usuario"
         placeholderTextColor="#999"
+        value={usernameOrEmail}
+        onChangeText={setUsernameOrEmail}
       />
 
       <TextInput
@@ -22,6 +42,8 @@ export default function LogIn() {
         placeholder="Contraseña"
         placeholderTextColor="#999"
         secureTextEntry
+        value={password}
+        onChangeText={setPassword}
       />
 
       <Pressable style={styles.button} onPress={handleLogin}>
