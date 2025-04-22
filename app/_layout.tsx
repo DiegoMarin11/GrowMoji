@@ -1,11 +1,13 @@
 import { Stack } from "expo-router";
-
+import { ProfessorProvider } from "./userContext";
 export default function RootLayout() {
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false, 
-      }}
-    />
+    <ProfessorProvider>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      />
+    </ProfessorProvider>
   );
 }

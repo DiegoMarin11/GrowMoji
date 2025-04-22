@@ -8,16 +8,21 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Login } from "../apiClient/interface"
+import { Login } from "../apiClient/interface";
+import { useProfessor } from "./userContext";
 export default function LogIn() {
   const router = useRouter();
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { setProfessorId } = useProfessor();
 
   const handleLogin = async () => {
     const result = await Login(usernameOrEmail, password);
-    
     if (result.success) {
+      const userResponse = await api.get(`/api/users/${usernameOrEmail}`);
+      const userId = userResponse.data.id;
+    
+      setProfessorId(userId);
       router.push("/mainPage");
     } else {
       alert("Error al iniciar sesión: " + result.error);
