@@ -1,4 +1,11 @@
 import { View, Text } from "react-native";
+import { useProfessor } from "./userContext";
 export default function MainPage() {
-  return <View><Text>hola</Text></View>;
+  const { professorId } = useProfessor();
+  return (
+    <View>
+      <Text>hola</Text>
+      <Text>Id profesor {professorId}</Text>
+    </View>
+  );
 }

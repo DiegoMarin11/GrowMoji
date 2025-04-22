@@ -9,12 +9,25 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+//API CALLS
 
+export const GetUserID = async (username: string) => {
+  try {
+    const response = await api.get(`/api/users/${username}`);
+    return { success: true, data: response.data };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message,
+    };
+  }
+};
+//Metodos
 export const Login = async (usernameOrEmail: string, password: string) => {
   try {
     const response = await api.post("/api/auth/login", {
       usernameOrEmail,
-      password,
+      password
     });
 
     return {

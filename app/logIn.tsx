@@ -8,26 +8,25 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Login } from "../apiClient/interface";
+import { GetUserID, Login } from "../apiClient/interface";
 import { useProfessor } from "./userContext";
 export default function LogIn() {
   const router = useRouter();
-  const [usernameOrEmail, setUsernameOrEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const { setProfessorId } = useProfessor();
 
   const handleLogin = async () => {
-    const result = await Login(usernameOrEmail, password);
+    const result = await Login(username, password);
     if (result.success) {
-      const userResponse = await api.get(`/api/users/${usernameOrEmail}`);
-      const userId = userResponse.data.id;
-    
+      const response = await GetUserID(username);
+      const userId = response.data.id;
+
       setProfessorId(userId);
       router.push("/mainPage");
     } else {
-      alert("Error al iniciar sesión: " + result.error);
+      Alert("Error al iniciar sesión: " + result.error);
     }
-
   };
 
   return (
@@ -38,8 +37,8 @@ export default function LogIn() {
         style={styles.input}
         placeholder="Usuario"
         placeholderTextColor="#999"
-        value={usernameOrEmail}
-        onChangeText={setUsernameOrEmail}
+        value={username}
+        onChangeText={setUsername}
       />
 
       <TextInput
