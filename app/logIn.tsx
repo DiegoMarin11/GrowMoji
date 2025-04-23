@@ -25,7 +25,7 @@ export default function LogIn() {
       setProfessorId(userId);
       router.push("/mainPage");
     } else {
-      Alert("Error al iniciar sesión: " + result.error);
+      alert("Error al iniciar sesión a: " + result.error);
     }
   };
 
