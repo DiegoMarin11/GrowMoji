@@ -9,7 +9,7 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
-//API CALLS
+//API CALLSs
 
 export const GetUserID = async (username: string) => {
   try {
@@ -39,6 +39,109 @@ export const Login = async (usernameOrEmail: string, password: string) => {
     return {
       success: false,
       error: error.message,
+    };
+  }
+};
+
+export const GetProfessorSensors = async (professorId: number) => {
+  try {
+    const response = await api.get(`/api/plants/professor/${professorId}`);
+    return { success: true, data: response.data };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message,
+    };
+  }
+};
+export const CreateStudent = async (studentData: {
+  name: string;
+  email: string;
+  username: string;
+  password: string;
+  role: "USER";
+}) => {
+  try {
+    const response = await api.post("/api/users", studentData);
+    return { success: true, data: response.data };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message,
+    };
+  }
+};
+export const CreateProfessor = async (studentData: {
+  name: string;
+  email: string;
+  username: string;
+  password: string;
+  role: "PROFESSOR";
+}) => {
+  try {
+    const response = await api.post("/api/users", studentData);
+    return { success: true, data: response.data };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message,
+    };
+  }
+};
+export const GetAllStudents = async () => {
+  try {
+    const response = await api.get("/api/users/role/USER");
+    return { success: true, data: response.data };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message,
+    };
+  }
+};
+export const AddPlantType = async (plantType: {
+  name: string;
+  optimalHumidity: number;
+  optimalNitrogen: number;
+  optimalPhosphorus: number;
+  optimalPotassium: number;
+  optimalSunlight: number;
+  estimatedTime: number;
+}) => {
+  try {
+    const response = await api.post("/api/plant-types", plantType);
+    return { success: true, data: response.data };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message,
+    };
+  }
+};
+export const AddPlant = async (plant: {
+  name: string;
+  userId: number;
+  professorId: number;
+  plantTypeId: number;
+}) => {
+  try {
+    const response = await api.post("/api/plants", plant);
+    return { success: true, data: response.data };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message,
+    };
+  }
+};
+export const GetPlantTypes = async () => {
+  try {
+    const response = await api.get("/api/plant-types");
+    return { success: true, data: response.data };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message,
     };
   }
 };
