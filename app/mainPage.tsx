@@ -14,6 +14,7 @@ type Sensor = {
   plantTypeName: string;
   createdAt: string;
 };
+//Falta crear componente de dispositivos creado y ACTIVO, que cuando el profesro clique en el de la vista detallada.
 export default function MainPage() {
   const { professorId } = useProfessor();
   const [sensors, setSensors] = useState<Sensor[]>([]);

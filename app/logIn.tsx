@@ -17,11 +17,17 @@ export default function LogIn() {
   const { setProfessorId } = useProfessor();
 
   const handleLogin = async () => {
-    const result = await Login(username, password);
+  
+    const result = await Login(username, password); // reemplazar con username y password
     if (result.success) {
       const response = await GetUserID(username);
       const userId = response.data.id;
+      const role = response.data.role;
 
+      if (role !== "PROFESSOR") {
+        alert("Acceso denegado. Solo los maestros pueden acceder.");
+        return;
+      }
       setProfessorId(userId);
       router.push("/mainPage");
     } else {
@@ -52,6 +58,12 @@ export default function LogIn() {
 
       <Pressable style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Entrar</Text>
+      </Pressable>
+      <Pressable
+        style={[styles.button, styles.registerButton]}
+        onPress={() => router.push("./crud/professor/registerProfessor")} // Aquí va la ruta a la pantalla de registro de profesor
+      >
+        <Text style={styles.buttonText}>Registrar Profesor</Text>
       </Pressable>
     </View>
   );
@@ -89,5 +101,8 @@ const styles = StyleSheet.create({
     color: "#015428",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  registerButton: {
+    marginTop: 20, // espacio adicional para separar los botones
   },
 });

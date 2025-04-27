@@ -145,4 +145,47 @@ export const GetPlantTypes = async () => {
     };
   }
 };
+
+export const createSensor = async (sensorData: any) => {
+  try {
+    const response = await api.post(`/api/sensor-data`, sensorData);
+    return response.data;
+  } catch (error) {
+    console.error("Error creando sensor:", error);
+    throw error;
+  }
+};
+
+export const getProfessorPlants = async (professorId: number) => {
+  try {
+    const response = await api.get(`/api/plants/professor/${professorId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error obteniendo plantas creadas por el profesor:", error);
+    throw error;
+  }
+};
+
+// Crear nuevo device
+export const createDevice = async (deviceData: any) => {
+  try {
+    const response = await api.post(`/api/devices`, deviceData);
+    return response.data;
+  } catch (error) {
+    console.error("Error creando device:", error);
+    throw error;
+  }
+};
+
+// Obtener lista de devices
+export const getDevices = async () => {
+  try {
+    const response = await api.get(`/api/devices`);
+    return response.data;
+  } catch (error) {
+    console.error("Error obteniendo devices:", error);
+    throw error;
+  }
+};
+
 export default api;
