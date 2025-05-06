@@ -6,69 +6,33 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
-import { useEffect, useState } from "react";
-import { createSensor, getDevices } from "../../../apiClient/interface";
+import { useState } from "react";
+import { createSensor } from "../../../apiClient/interface";
 import { Picker } from "@react-native-picker/picker";
 import { useRouter } from "expo-router";
-export default function SensorForm({ navigation }: any) {
+export default function SensorForm() {
   const router = useRouter();
-  const [deviceId, setDeviceId] = useState("");
-  const [humidity, setHumidity] = useState("");
-  const [nitrogenLevel, setNitrogenLevel] = useState("");
-  const [phosphorusLevel, setPhosphorusLevel] = useState("");
-  const [potassiumLevel, setPotassiumLevel] = useState("");
-  const [sunlightHours, setSunlightHours] = useState("");
-  const [devices, setDevices] = useState([]);
-
-  useEffect(() => {
-    const fetchDevices = async () => {
-      try {
-        const data = await getDevices();
-        const cleanedDevices = data
-          .filter((device: any) => device.id)
-          .map((device: any) => ({
-            label: device.id,
-            value: device.id,
-            plantId: device.plantId,
-          }));
-        setDevices(cleanedDevices);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchDevices();
-  }, []);
+  const [name, setName] = useState("");
+  const [type, setType] = useState("TEMPERATURE");
+  const [description, setDescription] = useState("");
+  const [manufacturer, setManufacturer] = useState("");
 
   const handleSubmit = async () => {
     try {
-      const selectedDevice = devices.find(
-        (device: any) => device.value === deviceId,
-      );
-
-      const plantId = selectedDevice ? selectedDevice.plantId : null;
-
-      //alert(plantId);
-
-      if (!plantId) {
-        alert("No se encontró un plantId para el dispositivo seleccionado");
-        return;
-      }
       const sensorData = {
-        deviceId: deviceId,
-        plantId: plantId,
-        humidity: parseFloat(humidity),
-        nitrogenLevel: parseFloat(nitrogenLevel),
-        phosphorusLevel: parseFloat(phosphorusLevel),
-        potassiumLevel: parseFloat(potassiumLevel),
-        sunlightHours: parseFloat(sunlightHours),
+        name,
+        type,
+        description,
+        manufacturer,
       };
 
-      await createSensor(sensorData);
-
-      alert("Sensor agregado correctamente");
-
-      router.back();
+      const result = await createSensor(sensorData);
+      if (result.success) {
+        alert("Sensor creado correctamente");
+        router.back();
+      } else {
+        alert("Hubo un error al agregar el sensor");
+      }
     } catch (error) {
       console.error(
         "Error creando sensor:",
@@ -80,64 +44,39 @@ export default function SensorForm({ navigation }: any) {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.label}>Selecciona Device ID</Text>
+      <Text style={styles.label}>Nombre del Sensor</Text>
+      <TextInput
+        style={styles.input}
+        value={name}
+        onChangeText={setName}
+        placeholder="Ej: Sensor de temperatura 1"
+      />
+
+      <Text style={styles.label}>Tipo de Sensor</Text>
       <Picker
-        selectedValue={deviceId}
-        onValueChange={(itemValue) => setDeviceId(itemValue)}
+        selectedValue={type}
+        onValueChange={(itemValue) => setType(itemValue)}
       >
-        {devices.map((device: any) => (
-          <Picker.Item
-            key={device.value}
-            label={device.label}
-            value={device.value}
-          />
-        ))}
+        <Picker.Item label="TEMPERATURE" value="TEMPERATURE" />
+        <Picker.Item label="HUMIDITY" value="HUMIDITY" />
+        <Picker.Item label="PH" value="PH" />
+        {/* Agrega más tipos si necesitas */}
       </Picker>
 
-      {/* Los demás campos de sensor */}
-      <Text style={styles.label}>Humedad (%)</Text>
+      <Text style={styles.label}>Descripción</Text>
       <TextInput
         style={styles.input}
-        value={humidity}
-        onChangeText={setHumidity}
-        placeholder="Ej: 50"
-        keyboardType="numeric"
+        value={description}
+        onChangeText={setDescription}
+        placeholder="Ej: Mide temperatura en el invernadero"
       />
 
-      <Text style={styles.label}>Nivel de Nitrógeno (%)</Text>
+      <Text style={styles.label}>Fabricante</Text>
       <TextInput
         style={styles.input}
-        value={nitrogenLevel}
-        onChangeText={setNitrogenLevel}
-        placeholder="Ej: 20"
-        keyboardType="numeric"
-      />
-
-      <Text style={styles.label}>Nivel de Fósforo (%)</Text>
-      <TextInput
-        style={styles.input}
-        value={phosphorusLevel}
-        onChangeText={setPhosphorusLevel}
-        placeholder="Ej: 15"
-        keyboardType="numeric"
-      />
-
-      <Text style={styles.label}>Nivel de Potasio (%)</Text>
-      <TextInput
-        style={styles.input}
-        value={potassiumLevel}
-        onChangeText={setPotassiumLevel}
-        placeholder="Ej: 10"
-        keyboardType="numeric"
-      />
-
-      <Text style={styles.label}>Horas de Luz Solar</Text>
-      <TextInput
-        style={styles.input}
-        value={sunlightHours}
-        onChangeText={setSunlightHours}
-        placeholder="Ej: 5"
-        keyboardType="numeric"
+        value={manufacturer}
+        onChangeText={setManufacturer}
+        placeholder="Ej: Bosch"
       />
 
       <Button title="Guardar Sensor" onPress={handleSubmit} />

@@ -146,15 +146,7 @@ export const GetPlantTypes = async () => {
   }
 };
 
-export const createSensor = async (sensorData: any) => {
-  try {
-    const response = await api.post(`/api/sensor-data`, sensorData);
-    return response.data;
-  } catch (error) {
-    console.error("Error creando sensor:", error);
-    throw error;
-  }
-};
+
 
 export const getProfessorPlants = async (professorId: number) => {
   try {
@@ -188,4 +180,37 @@ export const getDevices = async () => {
   }
 };
 
+export const createSensor = async (sensorData: {
+  name: string;
+  type: string;
+  description: string;
+  manufacturer: string;
+}) => {
+  const response = await api.post("/api/sensors", sensorData);
+  return { success: response.status === 201 || response.status === 200 };
+};
+
+export const getSensors = async () => {
+  try {
+    const response = await api.get("/api/sensors");
+    return response.data;
+  } catch (error) {
+    console.error("Error obteniendo sensores:", error);
+    throw error;
+  }
+};
+
+export const createSensorInstance = async (data: {
+  sensorModelId: number;
+  deviceId: string;
+  status: string;
+}) => {
+  try {
+    const response = await api.post("/api/sensor-instances", data);
+    return { success: response.status === 201 || response.status === 200 };
+  } catch (error) {
+    console.error("Error creando sensor instance:", error);
+    return { success: false };
+  }
+};
 export default api;
