@@ -223,4 +223,22 @@ export const getSensorInstances = async () => {
     return { success: false, data: [] };
   }
 };
+export const createSensorData = async (data: {
+  deviceId: string;
+  plantId: number;
+  humidity: number;
+  nitrogenLevel: number;
+  phosphorusLevel: number;
+  potassiumLevel: number;
+  sunlightHours: number;
+}) => {
+  try {
+    const response = await api.post("/api/sensor-data", data);
+    return { success: response.status === 201 || response.status === 200 };
+  } catch (error) {
+    console.error("Error creando sensor data:", error);
+    return { success: false };
+  }
+};
+
 export default api;

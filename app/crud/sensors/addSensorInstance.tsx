@@ -13,6 +13,7 @@ import {
   getDevices,
   getSensors,
   createSensorInstance,
+  createSensorData,
 } from "../../../apiClient/interface";
 
 export default function SensorInstanceForm() {
@@ -32,10 +33,11 @@ export default function SensorInstanceForm() {
           getDevices(),
           getSensors(),
         ]);
-        setDevices(deviceData);
-        setSensors(sensorData);
+        //console.log("Device data:", deviceData); 
+        setDevices(Array.isArray(deviceData.data) ? deviceData.data : []);
+        setSensors(Array.isArray(sensorData) ? sensorData : []);
         setSensorModelId(sensorData[0]?.id || null);
-        setDeviceId(deviceData[0]?.id || "");
+        setDeviceId(deviceData.data?.[0]?.id || "");
       } catch (error) {
         alert("Error cargando sensores o dispositivos");
       } finally {
@@ -61,6 +63,18 @@ export default function SensorInstanceForm() {
     try {
       const result = await createSensorInstance(payload);
       if (result.success) {
+        const device = devices.find((d) => d.id === deviceId);
+        const sensorDataPayload = {
+          deviceId: deviceId,
+          plantId: device?.plantId ?? 0, 
+          humidity: 0.1,
+          nitrogenLevel: 0.1,
+          phosphorusLevel: 0.1,
+          potassiumLevel: 0.1,
+          sunlightHours: 0.1,
+        };
+
+        await createSensorData(sensorDataPayload);
         alert("Relacion creada correctamente");
         router.back();
       } else {

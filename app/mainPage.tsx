@@ -90,7 +90,7 @@ export default function MainPage() {
         />
       )}
       <Button
-        title="Ir a Panel de Administración"
+        title="Ir a Panel de Administraciodn"
         onPress={() => router.push("/adminPanel")}
       />
     </View>
@@ -117,4 +117,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-3;
+;
