@@ -1,60 +1,94 @@
-import { View, Text, Pressable, FlatList, StyleSheet, Button } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  FlatList,
+  StyleSheet,
+  Button,
+  ActivityIndicator,
+} from "react-native";
 import { useProfessor } from "./userContext";
 import { useEffect, useState } from "react";
-import { GetProfessorSensors } from "@/apiClient/interface";
+import { getSensorInstances, getDevices } from "@/apiClient/interface";
 import { router } from "expo-router";
-type Sensor = {
-  id: number;
-  name: string;
-  userId: number;
-  userName: string;
-  professorId: number;
-  professorName: string;
-  plantTypeId: number;
-  plantTypeName: string;
-  createdAt: string;
+
+type DisplayPlantItem = {
+  instanceId: number;
+  plantName: string;
 };
-//Falta crear componente de dispositivos creado y ACTIVO, que cuando el profesro clique en el de la vista detallada.
+
 export default function MainPage() {
   const { professorId } = useProfessor();
-  const [sensors, setSensors] = useState<Sensor[]>([]);
+  const [plants, setPlants] = useState<DisplayPlantItem[]>([]);
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
-    const fetchSensors = async () => {
-      const idProfessor = Number(professorId);
-      const result = await GetProfessorSensors(idProfessor);
-      if (result.success) {
-        setSensors(result.data);
-      } else {
-        console.error("Error al obtener sensores:", result.error);
+    const fetchActivePlants = async () => {
+      setLoading(true);
+      try {
+        const instanceResult = await getSensorInstances();
+        if (!instanceResult.success)
+          throw new Error("No se pudieron obtener instancias");
+
+        const allInstances = instanceResult.data;
+        const activeInstances = allInstances.filter(
+          (instance: any) => instance.status === "ACTIVE",
+        );
+
+        const deviceResult = await getDevices();
+        if (!deviceResult.success)
+          throw new Error("No se pudieron obtener dispositivos");
+
+        const deviceList = deviceResult.data;
+
+        const plantItems = activeInstances
+          .map((instance: any) => {
+            const matchingDevice = deviceList.find(
+              (device: any) =>
+                device.id === instance.deviceId && device.status === "ACTIVE",
+            );
+            if (!matchingDevice) return null;
+
+            return {
+              instanceId: instance.id,
+              plantName: matchingDevice.plantName,
+            };
+          })
+          .filter(Boolean);
+
+        setPlants(plantItems);
+      } catch (error) {
+        console.error("Error obteniendo datos:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    if (professorId) {
-      fetchSensors();
-    }
-  }, [professorId]);
+    fetchActivePlants();
+  }, []);
 
-  const renderSensor = ({ item }: any) => (
-    <Pressable style={styles.sensorItem} onPress={() => console.log("Sensor seleccionado", item)}>
-      <Text style={styles.sensorText}>Sensor ID: {item.id}</Text>
-      <Text style={styles.sensorText}>Planta: {item.plantName || "Sin nombre"}</Text>
+  const renderPlantItem = ({ item }: { item: DisplayPlantItem }) => (
+    <Pressable
+      style={styles.sensorItem}
+      onPress={() => console.log("Ir a vista detallada de planta", item)}
+    >
+      <Text style={styles.sensorText}>Planta: {item.plantName}</Text>
+      <Text style={styles.sensorText}>Instancia ID: {item.instanceId}</Text>
     </Pressable>
   );
 
   return (
-    <View>
-      <Text>ID del Profesor: {professorId}</Text>
-      <FlatList
-        data={sensors}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View>
-            <Text>Sensor: {item.name}</Text>
-            <Text>Planta: {item.plantTypeName}</Text>
-            <Text>Usuario: {item.userName}</Text>
-          </View>
-        )}
-      />
+    <View style={styles.container}>
+      <Text style={styles.title}>Plantas Activas del Profesor</Text>
+      {loading ? (
+        <ActivityIndicator size="large" color="#00aa00" />
+      ) : (
+        <FlatList
+          data={plants}
+          keyExtractor={(item) => item.instanceId.toString()}
+          renderItem={renderPlantItem}
+        />
+      )}
       <Button
         title="Ir a Panel de Administración"
         onPress={() => router.push("/adminPanel")}
@@ -83,3 +117,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+3;

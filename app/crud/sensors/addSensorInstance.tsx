@@ -61,14 +61,14 @@ export default function SensorInstanceForm() {
     try {
       const result = await createSensorInstance(payload);
       if (result.success) {
-        alert("Relación creada correctamente");
+        alert("Relacion creada correctamente");
         router.back();
       } else {
-        alert("Error al crear la relación");
+        alert("Error al crear la relacion");
       }
     } catch (error) {
-      console.error("Error al crear relación:", error);
-      alert("Hubo un error al crear la relación");
+      console.error("Error al crear relacion:", error);
+      alert("Hubo un error al crear la relacion");
     }
   };
 
@@ -98,7 +98,11 @@ export default function SensorInstanceForm() {
         onValueChange={(value) => setDeviceId(value)}
       >
         {devices.map((device) => (
-          <Picker.Item key={device.id} label={device.plantName} value={device.id} />
+          <Picker.Item
+            key={device.id}
+            label={device.plantName}
+            value={device.id}
+          />
         ))}
       </Picker>
 
@@ -111,7 +115,7 @@ export default function SensorInstanceForm() {
         <Picker.Item label="INACTIVO" value="INACTIVE" />
       </Picker>
 
-      <Button title="Guardar Relación" onPress={handleSubmit} />
+      <Button title="Guardar Relacion" onPress={handleSubmit} />
     </ScrollView>
   );
 }

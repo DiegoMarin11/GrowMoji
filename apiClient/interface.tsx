@@ -173,12 +173,13 @@ export const createDevice = async (deviceData: any) => {
 export const getDevices = async () => {
   try {
     const response = await api.get(`/api/devices`);
-    return response.data;
+    return { success: true, data: response.data };
   } catch (error) {
     console.error("Error obteniendo devices:", error);
-    throw error;
+    return { success: false, data: [] };
   }
 };
+
 
 export const createSensor = async (sensorData: {
   name: string;
@@ -211,6 +212,15 @@ export const createSensorInstance = async (data: {
   } catch (error) {
     console.error("Error creando sensor instance:", error);
     return { success: false };
+  }
+};
+export const getSensorInstances = async () => {
+  try {
+    const response = await api.get("/api/sensor-instances");
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error obteniendo instancias de sensor:", error);
+    return { success: false, data: [] };
   }
 };
 export default api;
