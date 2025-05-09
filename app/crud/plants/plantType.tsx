@@ -19,18 +19,25 @@ export default function AddPlantTypeScreen() {
   const [optimalPotassium, setOptimalPotassium] = useState("");
   const [optimalSunlight, setOptimalSunlight] = useState("");
   const [estimatedTime, setEstimatedTime] = useState("");
-
+  const [optimalAirHumidity, setOptimalAirHumidity] = useState("");
+  const [optimalAirTemperature, setOptimalAirTemperature] = useState("");
+  const [optimalSoilEC, setOptimalSoilEC] = useState("");
+  const [optimalSoilpH, setOptimalSoilpH] = useState("");
   const router = useRouter();
 
   const handleSubmit = async () => {
     const data = {
       name,
-      optimalHumidity: parseFloat(optimalHumidity),
-      optimalNitrogen: parseFloat(optimalNitrogen),
-      optimalPhosphorus: parseFloat(optimalPhosphorus),
-      optimalPotassium: parseFloat(optimalPotassium),
-      optimalSunlight: parseFloat(optimalSunlight),
-      estimatedTime: parseInt(estimatedTime),
+      optimalSoilMoisture: parseFloat(optimalHumidity),
+      optimalAirHumidity: parseFloat(optimalAirHumidity),
+      optimalSunlightIntensity: parseFloat(optimalSunlight),
+      optimalAirTemperature: parseFloat(optimalAirTemperature),
+      optimalNitrogenLevel: parseFloat(optimalNitrogen),
+      optimalPhosphorusLevel: parseFloat(optimalPhosphorus),
+      optimalPotassiumLevel: parseFloat(optimalPotassium),
+      optimalSoilEC: parseFloat(optimalSoilEC),
+      optimalSoilpH: parseFloat(optimalSoilpH),
+      estimatedHarvestTime: parseInt(estimatedTime),
     };
 
     const result = await AddPlantType(data);
@@ -96,7 +103,34 @@ export default function AddPlantTypeScreen() {
         value={estimatedTime}
         onChangeText={setEstimatedTime}
       />
-
+      <TextInput
+        style={styles.input}
+        placeholder="Humedad del Aire Óptima"
+        keyboardType="numeric"
+        value={optimalAirHumidity}
+        onChangeText={setOptimalAirHumidity}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Temperatura del Aire Óptima"
+        keyboardType="numeric"
+        value={optimalAirTemperature}
+        onChangeText={setOptimalAirTemperature}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Conductividad del Suelo Óptima (EC)"
+        keyboardType="numeric"
+        value={optimalSoilEC}
+        onChangeText={setOptimalSoilEC}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="pH del Suelo Óptimo"
+        keyboardType="numeric"
+        value={optimalSoilpH}
+        onChangeText={setOptimalSoilpH}
+      />
       <Pressable style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Agregar</Text>
       </Pressable>

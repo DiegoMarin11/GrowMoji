@@ -33,7 +33,7 @@ export default function SensorInstanceForm() {
           getDevices(),
           getSensors(),
         ]);
-        //console.log("Device data:", deviceData); 
+        //console.log("Device data:", deviceData);
         setDevices(Array.isArray(deviceData.data) ? deviceData.data : []);
         setSensors(Array.isArray(sensorData) ? sensorData : []);
         setSensorModelId(sensorData[0]?.id || null);
@@ -66,12 +66,16 @@ export default function SensorInstanceForm() {
         const device = devices.find((d) => d.id === deviceId);
         const sensorDataPayload = {
           deviceId: deviceId,
-          plantId: device?.plantId ?? 0, 
-          humidity: 0.1,
+          plantId: device?.plantId ?? 0,
+          soilMoisture: 0.1,
+          airHumidity: 0.1,
+          sunlightIntensity: 0.1,
+          airTemperature: 0.1,
           nitrogenLevel: 0.1,
           phosphorusLevel: 0.1,
           potassiumLevel: 0.1,
-          sunlightHours: 0.1,
+          soilEC: 0.1,
+          soilpH: 0.1,
         };
 
         await createSensorData(sensorDataPayload);

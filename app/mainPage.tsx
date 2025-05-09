@@ -15,6 +15,7 @@ import { router } from "expo-router";
 type DisplayPlantItem = {
   instanceId: number;
   plantName: string;
+  deviceId: string,
 };
 
 export default function MainPage() {
@@ -52,6 +53,7 @@ export default function MainPage() {
             return {
               instanceId: instance.id,
               plantName: matchingDevice.plantName,
+              deviceId: instance.deviceId,
             };
           })
           .filter(Boolean);
@@ -70,14 +72,20 @@ export default function MainPage() {
   const renderPlantItem = ({ item }: { item: DisplayPlantItem }) => (
     <Pressable
       style={styles.sensorItem}
-      onPress={() => console.log("Ir a vista detallada de planta", item)}
+      //onPress={() => console.log("Ir a vista detallada de planta", item)}
+      onPress={() =>
+        router.push({
+          pathname: "/crud/plants/plantDetailledView",
+          params: { deviceId: item.deviceId },
+        })
+      }
     >
       <Text style={styles.sensorText}>Planta: {item.plantName}</Text>
       <Text style={styles.sensorText}>Instancia ID: {item.instanceId}</Text>
     </Pressable>
   );
 
-  return (
+  return (  
     <View style={styles.container}>
       <Text style={styles.title}>Plantas Activas del Profesor</Text>
       {loading ? (
@@ -117,4 +125,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-;

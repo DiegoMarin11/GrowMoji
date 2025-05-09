@@ -99,15 +99,7 @@ export const GetAllStudents = async () => {
     };
   }
 };
-export const AddPlantType = async (plantType: {
-  name: string;
-  optimalHumidity: number;
-  optimalNitrogen: number;
-  optimalPhosphorus: number;
-  optimalPotassium: number;
-  optimalSunlight: number;
-  estimatedTime: number;
-}) => {
+export const AddPlantType = async (plantType: any) => {
   try {
     const response = await api.post("/api/plant-types", plantType);
     return { success: true, data: response.data };
@@ -118,6 +110,7 @@ export const AddPlantType = async (plantType: {
     };
   }
 };
+
 export const AddPlant = async (plant: {
   name: string;
   userId: number;
@@ -223,15 +216,7 @@ export const getSensorInstances = async () => {
     return { success: false, data: [] };
   }
 };
-export const createSensorData = async (data: {
-  deviceId: string;
-  plantId: number;
-  humidity: number;
-  nitrogenLevel: number;
-  phosphorusLevel: number;
-  potassiumLevel: number;
-  sunlightHours: number;
-}) => {
+export const createSensorData = async (data: any) => {
   try {
     const response = await api.post("/api/sensor-data", data);
     return { success: response.status === 201 || response.status === 200 };
@@ -239,6 +224,16 @@ export const createSensorData = async (data: {
     console.error("Error creando sensor data:", error);
     return { success: false };
   }
+};
+
+export const getSensorDataByDeviceId = async (deviceId: any) => {
+  try {
+    const response = await api.get(`/api/sensor-data/device/${deviceId}`);
+    return { success: true, data: response.data };
+  } catch (error: any) {
+    console.error("Error obteniendo datos del sensor:", error);
+    return { success: false, error: error.message };
+  } 
 };
 
 export default api;
