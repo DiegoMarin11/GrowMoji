@@ -11,11 +11,12 @@ import { useProfessor } from "./userContext";
 import { useEffect, useState } from "react";
 import { getSensorInstances, getDevices } from "@/apiClient/interface";
 import { router } from "expo-router";
-
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 type DisplayPlantItem = {
   instanceId: number;
   plantName: string;
-  deviceId: string,
+  deviceId: string;
 };
 
 export default function MainPage() {
@@ -23,51 +24,53 @@ export default function MainPage() {
   const [plants, setPlants] = useState<DisplayPlantItem[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchActivePlants = async () => {
-      setLoading(true);
-      try {
-        const instanceResult = await getSensorInstances();
-        if (!instanceResult.success)
-          throw new Error("No se pudieron obtener instancias");
+  useFocusEffect(
+    useCallback(() => {
+      const fetchActivePlants = async () => {
+        setLoading(true);
+        try {
+          const instanceResult = await getSensorInstances();
+          if (!instanceResult.success)
+            throw new Error("No se pudieron obtener instancias");
 
-        const allInstances = instanceResult.data;
-        const activeInstances = allInstances.filter(
-          (instance: any) => instance.status === "ACTIVE",
-        );
+          const allInstances = instanceResult.data;
+          const activeInstances = allInstances.filter(
+            (instance: any) => instance.status === "ACTIVE",
+          );
 
-        const deviceResult = await getDevices();
-        if (!deviceResult.success)
-          throw new Error("No se pudieron obtener dispositivos");
+          const deviceResult = await getDevices();
+          if (!deviceResult.success)
+            throw new Error("No se pudieron obtener dispositivos");
 
-        const deviceList = deviceResult.data;
+          const deviceList = deviceResult.data;
 
-        const plantItems = activeInstances
-          .map((instance: any) => {
-            const matchingDevice = deviceList.find(
-              (device: any) =>
-                device.id === instance.deviceId && device.status === "ACTIVE",
-            );
-            if (!matchingDevice) return null;
+          const plantItems = activeInstances
+            .map((instance: any) => {
+              const matchingDevice = deviceList.find(
+                (device: any) =>
+                  device.id === instance.deviceId && device.status === "ACTIVE",
+              );
+              if (!matchingDevice) return null;
 
-            return {
-              instanceId: instance.id,
-              plantName: matchingDevice.plantName,
-              deviceId: instance.deviceId,
-            };
-          })
-          .filter(Boolean);
+              return {
+                instanceId: instance.id,
+                plantName: matchingDevice.plantName,
+                deviceId: instance.deviceId,
+              };
+            })
+            .filter(Boolean);
 
-        setPlants(plantItems);
-      } catch (error) {
-        console.error("Error obteniendo datos:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+          setPlants(plantItems);
+        } catch (error) {
+          console.error("Error obteniendo datos:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-    fetchActivePlants();
-  }, []);
+      fetchActivePlants();
+    }, []),
+  );
 
   const renderPlantItem = ({ item }: { item: DisplayPlantItem }) => (
     <Pressable
@@ -85,7 +88,7 @@ export default function MainPage() {
     </Pressable>
   );
 
-  return (  
+  return (
     <View style={styles.container}>
       <Text style={styles.title}>Plantas Activas del Profesor</Text>
       {loading ? (
