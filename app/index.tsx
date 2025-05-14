@@ -20,7 +20,7 @@ export default function Index() {
           color: "#fff",
         }}
       >
-        Lorem ipssum .....
+        Grow Emoji
       </Text>
       <Pressable style={styles.button} onPress={() => setShowLogin(true)}>
         <Text

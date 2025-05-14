@@ -9,16 +9,23 @@ export default function SensorDetail() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let interval: NodeJS.Timeout;
     const fetchData = async () => {
       const result = await getSensorDataByDeviceId(deviceId as string);
       if (result.success) {
-        setData(result.data[0]); 
+        setData(result.data[0]);
         console.log(deviceId);
       }
       setLoading(false);
     };
 
     fetchData();
+
+    interval = setInterval(() => {
+      fetchData();
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, [deviceId]);
 
   if (loading) {
