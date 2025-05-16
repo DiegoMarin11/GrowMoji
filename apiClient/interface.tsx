@@ -27,7 +27,7 @@ export const Login = async (usernameOrEmail: string, password: string) => {
   try {
     const response = await api.post("/api/auth/login", {
       usernameOrEmail,
-      password
+      password,
     });
 
     return {
@@ -139,8 +139,6 @@ export const GetPlantTypes = async () => {
   }
 };
 
-
-
 export const getProfessorPlants = async (professorId: number) => {
   try {
     const response = await api.get(`/api/plants/professor/${professorId}`);
@@ -172,7 +170,6 @@ export const getDevices = async () => {
     return { success: false, data: [] };
   }
 };
-
 
 export const createSensor = async (sensorData: {
   name: string;
@@ -233,7 +230,28 @@ export const getSensorDataByDeviceId = async (deviceId: any) => {
   } catch (error: any) {
     console.error("Error obteniendo datos del sensor:", error);
     return { success: false, error: error.message };
-  } 
+  }
 };
+export const getDeviceByUserId = async (userId: number) => {
+  try {
+    // Paso 1: Obtener la planta del usuario
+    const plantResponse = await api.get(`/api/plants/user/${userId}`);
+    const plantData = plantResponse.data;
+    if (!plantData || plantData.length === 0) {
+      return {
+        success: false,
+        error: "El usuario no tiene una planta asignada.",
+      };
+    }
 
+    const plantId = plantData[0].id;
+    console.log(plantId)
+    // Paso 2: Obtener el dispositivo asociado a esa planta
+    const deviceResponse = await api.get(`/api/devices/plant/${plantId}`);
+    return { success: true, data: deviceResponse.data };
+  } catch (error: any) {
+    console.error("Error en getDeviceByUserId:", error);
+    return { success: false, error: error.message };
+  }
+};
 export default api;

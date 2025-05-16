@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { GetUserID, Login } from "../apiClient/interface";
+import { GetUserID, Login, getDeviceByUserId } from "../apiClient/interface";
 import { useProfessor } from "./userContext";
 export default function LogIn() {
   const router = useRouter();
@@ -17,21 +17,48 @@ export default function LogIn() {
   const { setProfessorId } = useProfessor();
 
   const handleLogin = async () => {
-  
-    const result = await Login(username, password); // reemplazar con username y password
+    const result = await Login(username, password);
+    console.log("sdsads");
     if (result.success) {
       const response = await GetUserID(username);
       const userId = response.data.id;
       const role = response.data.role;
 
-      if (role !== "PROFESSOR") {
-        alert("Acceso denegado. Solo los maestros pueden acceder.");
+      if (role === "USER") {
+        const deviceResult = await getDeviceByUserId(userId);
+
+        if (deviceResult.success) {
+          const devices = deviceResult.data;
+
+          if (devices.length > 0) {
+            const deviceId = devices[0].id;
+            console.log("Dispositivo encontrado:", deviceId);
+
+            router.push({
+              pathname: "/crud/plants/plantDetailledView",
+              params: { deviceId },
+            });
+          } else {
+            Alert.alert(
+              "Error",
+              "No se encontró ningún dispositivo asociado al usuario.",
+            );
+          }
+        } else {
+          Alert.alert(
+            "Error",
+            "No se pudo obtener los dispositivos del usuario.",
+          );
+        }
+
         return;
+      } else {
+        // Si es profesor
+        setProfessorId(userId);
+        router.push("/mainPage");
       }
-      setProfessorId(userId);
-      router.push("/mainPage");
     } else {
-      alert("Error al iniciar sesión a: " + result.error);
+      Alert.alert("Error al iniciar sesión", result.error);
     }
   };
 
