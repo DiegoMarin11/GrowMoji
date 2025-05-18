@@ -1,6 +1,6 @@
 import { View, Text, TextInput, Pressable, StyleSheet, Alert } from "react-native";
 import { useState } from "react";
-import { CreateProfessor } from "../../../apiClient/interface"; // Cambia el import al método adecuado
+import { CreateProfessor } from "../../../apiClient/interface"; 
 import { useRouter } from "expo-router";
 
 export default function Professors() {

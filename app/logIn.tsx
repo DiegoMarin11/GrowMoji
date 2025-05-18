@@ -88,7 +88,7 @@ export default function LogIn() {
       </Pressable>
       <Pressable
         style={[styles.button, styles.registerButton]}
-        onPress={() => router.push("./crud/professor/registerProfessor")} // Aquí va la ruta a la pantalla de registro de profesor
+        onPress={() => router.push("/crud/professor/registerProfessor")} // Aquí va la ruta a la pantalla de registro de profesor
       >
         <Text style={styles.buttonText}>Registrar Profesor</Text>
       </Pressable>

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://10.0.2.2:8080"; // WINDOWS
+const API_BASE_URL = "http://192.168.100.230:8080"; // WINDOWS "http://10.0.2.2:8080" //Android Emulator
 
 const api = axios.create({
   baseURL: API_BASE_URL,
