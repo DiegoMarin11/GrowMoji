@@ -7,21 +7,30 @@ import {
   ScrollView,
 } from "react-native";
 import { useEffect, useState } from "react";
-import { createDevice, getProfessorPlants } from "../../../apiClient/interface";
+import {
+  getProfessorPlants,
+  getDevicesByStatus,
+  assignDeviceToPlant,
+} from "../../../apiClient/interface";
 import { useProfessor } from "../../userContext";
 import { Picker } from "@react-native-picker/picker";
 import { useRouter } from "expo-router";
-export default function DeviceForm({ navigation }: any) {
+export default function DeviceForm() {
   const router = useRouter();
   const [plants, setPlants] = useState([]);
   const [selectedPlantId, setSelectedPlantId] = useState("");
+  const [selectedDeviceId, setSelectedDeviceId] = useState("");
+  const [devices, setDevices] = useState([]);
   const { professorId } = useProfessor();
   const idProfessor = Number(professorId);
   useEffect(() => {
     const fetchPlants = async () => {
       try {
         const data = await getProfessorPlants(idProfessor);
+        const unregisteredDevices = await getDevicesByStatus("unregistered");
         setPlants(data);
+        console.log(data);
+        setDevices(unregisteredDevices);
       } catch (error) {
         console.error(error);
       }
@@ -37,7 +46,11 @@ export default function DeviceForm({ navigation }: any) {
         status: "ACTIVE",
       };
 
-      await createDevice(deviceData);
+      //await createDevice(deviceData);
+      await assignDeviceToPlant(
+        Number(selectedDeviceId),
+        Number(selectedPlantId),
+      );
 
       alert("Device creado correctamente");
       router.back();
@@ -61,7 +74,19 @@ export default function DeviceForm({ navigation }: any) {
           />
         ))}
       </Picker>
-
+      <Text style={styles.label}>Selecciona un Device</Text>
+      <Picker
+        selectedValue={selectedDeviceId}
+        onValueChange={(itemValue) => setSelectedDeviceId(itemValue)}
+      >
+        {devices.map((device: any) => (
+          <Picker.Item
+            key={device.id}
+            label={`ID ${device.id}`}
+            value={device.id.toString()}
+          />
+        ))}
+      </Picker>
       <Button title="Crear Device" onPress={handleSubmit} />
     </ScrollView>
   );

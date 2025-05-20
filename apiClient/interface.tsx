@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://192.168.100.230:8080"; // WINDOWS "http://10.0.2.2:8080" //Android Emulator
+const API_BASE_URL = "http://10.0.2.2:8080"; // WINDOWS "http://10.0.2.2:8080" //Android Emulator http://10.42.0.1:8080/swagger-ui/index.html \ localhost
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -254,4 +254,18 @@ export const getDeviceByUserId = async (userId: number) => {
     return { success: false, error: error.message };
   }
 };
+
+export const getDevicesByStatus = async (status: string) => {
+  const response = await api.get(`/devices/status/${status}`);
+  return response.data;
+};
+
+export const assignDeviceToPlant = async (deviceId: number, plantId: number) => {
+  const response = await api.patch(`/devices/${deviceId}`, {
+    plantId,
+    status: "ACTIVE",
+  });
+  return response.data;
+};
+
 export default api;
