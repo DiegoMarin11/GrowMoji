@@ -256,12 +256,12 @@ export const getDeviceByUserId = async (userId: number) => {
 };
 
 export const getDevicesByStatus = async (status: string) => {
-  const response = await api.get(`/devices/status/${status}`);
+  const response = await api.get(`/api/devices/status/${status}`);
   return response.data;
 };
 
 export const assignDeviceToPlant = async (deviceId: number, plantId: number) => {
-  const response = await api.patch(`/devices/${deviceId}`, {
+  const response = await api.patch(`/api/devices/${deviceId}`, {
     plantId,
     status: "ACTIVE",
   });

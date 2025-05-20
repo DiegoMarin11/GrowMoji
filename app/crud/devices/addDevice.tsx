@@ -25,14 +25,22 @@ export default function DeviceForm() {
   const idProfessor = Number(professorId);
   useEffect(() => {
     const fetchPlants = async () => {
+      console.log("holaa")
       try {
         const data = await getProfessorPlants(idProfessor);
-        const unregisteredDevices = await getDevicesByStatus("unregistered");
         setPlants(data);
-        console.log(data);
+      } catch (error) {
+        console.error("Error al obtener las plantas:", error);
+        alert("No se pudieron cargar las plantas.");
+      }
+
+      try {
+        const unregisteredDevices = await getDevicesByStatus("UNREGISTERED");
         setDevices(unregisteredDevices);
       } catch (error) {
-        console.error(error);
+        console.error("Error al obtener dispositivos sin registrar:", error);
+        alert("No se pudieron cargar los dispositivos sin registrar.");
+        setDevices([]); 
       }
     };
 
