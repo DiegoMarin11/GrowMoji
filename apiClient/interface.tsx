@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://10.0.2.2:8080"; // WINDOWS "http://10.0.2.2:8080" //Android Emulator http://10.42.0.1:8080/swagger-ui/index.html \ localhost
+const API_BASE_URL = "http://10.42.0.1:8080"; // WINDOWS "http://10.0.2.2:8080" //Android Emulator http://10.42.0.1:8080/swagger-ui/index.html \ localhost
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -225,7 +225,8 @@ export const createSensorData = async (data: any) => {
 
 export const getSensorDataByDeviceId = async (deviceId: any) => {
   try {
-    const response = await api.get(`/api/sensor-data/device/${deviceId}`);
+    const response = await api.get(`/api/sensor-data/device/${deviceId}/latest`);
+    console.log(response.data)
     return { success: true, data: response.data };
   } catch (error: any) {
     console.error("Error obteniendo datos del sensor:", error);

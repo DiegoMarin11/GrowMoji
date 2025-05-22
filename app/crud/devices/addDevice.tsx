@@ -25,7 +25,7 @@ export default function DeviceForm() {
   const idProfessor = Number(professorId);
   useEffect(() => {
     const fetchPlants = async () => {
-      console.log("holaa")
+      //console.log("holaa")
       try {
         const data = await getProfessorPlants(idProfessor);
         setPlants(data);

@@ -8,100 +8,83 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useProfessor } from "./userContext";
-import { useEffect, useState } from "react";
-import { getSensorInstances, getDevices } from "@/apiClient/interface";
+import { useState } from "react";
+import { getDevices } from "@/apiClient/interface";
 import { router } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
-type DisplayPlantItem = {
-  instanceId: number;
+
+type DisplayDeviceItem = {
+  id: string;
   plantName: string;
-  deviceId: string;
 };
 
 export default function MainPage() {
   const { professorId } = useProfessor();
-  const [plants, setPlants] = useState<DisplayPlantItem[]>([]);
+  const [devices, setDevices] = useState<DisplayDeviceItem[]>([]);
   const [loading, setLoading] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
-      const fetchActivePlants = async () => {
+      const fetchDevices = async () => {
         setLoading(true);
         try {
-          const instanceResult = await getSensorInstances();
-          if (!instanceResult.success)
-            throw new Error("No se pudieron obtener instancias");
+          const result = await getDevices();
+          if (!result.success)
+            throw new Error("No se pudieron obtener devices");
 
-          const allInstances = instanceResult.data;
-          const activeInstances = allInstances.filter(
-            (instance: any) => instance.status === "ACTIVE",
+          const activeDevices = result.data.filter(
+            (device: any) => device.status === "ACTIVE",
           );
 
-          const deviceResult = await getDevices();
-          if (!deviceResult.success)
-            throw new Error("No se pudieron obtener dispositivos");
+          const deviceItems: DisplayDeviceItem[] = activeDevices.map(
+            (device: any) => ({
+              id: device.id,
+              plantName: device.plantName,
+            }),
+          );
 
-          const deviceList = deviceResult.data;
-
-          const plantItems = activeInstances
-            .map((instance: any) => {
-              const matchingDevice = deviceList.find(
-                (device: any) =>
-                  device.id === instance.deviceId && device.status === "ACTIVE",
-              );
-              if (!matchingDevice) return null;
-
-              return {
-                instanceId: instance.id,
-                plantName: matchingDevice.plantName,
-                deviceId: instance.deviceId,
-              };
-            })
-            .filter(Boolean);
-
-          setPlants(plantItems);
+          setDevices(deviceItems);
         } catch (error) {
-          console.error("Error obteniendo datos:", error);
+          console.error("Error obteniendo devices:", error);
         } finally {
           setLoading(false);
         }
       };
 
-      fetchActivePlants();
+      fetchDevices();
     }, []),
   );
 
-  const renderPlantItem = ({ item }: { item: DisplayPlantItem }) => (
+  const renderDeviceItem = ({ item }: { item: DisplayDeviceItem }) => (
     <Pressable
       style={styles.sensorItem}
-      //onPress={() => console.log("Ir a vista detallada de planta", item)}
       onPress={() =>
         router.push({
           pathname: "/crud/plants/plantDetailledView",
-          params: { deviceId: item.deviceId },
+          params: { deviceId: item.id },
         })
       }
     >
       <Text style={styles.sensorText}>Planta: {item.plantName}</Text>
-      <Text style={styles.sensorText}>Instancia ID: {item.instanceId}</Text>
+      <Text style={styles.sensorText}>Dispositivo ID: {item.id}</Text>
     </Pressable>
   );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Plantas Activas del Profesor</Text>
+      <Text style={styles.title}>Dispositivos Activos del Profesor</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#00aa00" />
       ) : (
         <FlatList
-          data={plants}
-          keyExtractor={(item) => item.instanceId.toString()}
-          renderItem={renderPlantItem}
+          data={devices}
+          keyExtractor={(item) => item.id}
+          renderItem={renderDeviceItem}
         />
       )}
       <Button
-        title="Ir a Panel de Administraciodn"
+        title="Ir a Panel de Administración"
         onPress={() => router.push("/adminPanel")}
       />
     </View>

@@ -12,8 +12,26 @@ export default function SensorDetail() {
     let interval: NodeJS.Timeout;
     const fetchData = async () => {
       const result = await getSensorDataByDeviceId(deviceId as string);
+      console.log(result);
       if (result.success) {
-        setData(result.data[0]);
+        const simulatedData = {
+          airHumidity: (40 + Math.random() * 20).toFixed(2),
+          airTemperature: (20 + Math.random() * 10).toFixed(2),
+          createdAt: new Date().toISOString(),
+          deviceId: deviceId,
+          nitrogenLevel: (0.5 + Math.random()).toFixed(2),
+          phosphorusLevel: (1 + Math.random()).toFixed(2),
+          plantId: 4,
+          potassiumLevel: (3 + Math.random()).toFixed(2),
+          soilEC: (1 + Math.random()).toFixed(2),
+          soilMoisture: (50 + Math.random() * 30).toFixed(2),
+          soilpH: (5 + Math.random()).toFixed(2),
+          sunlightIntensity: (400 + Math.random() * 200).toFixed(2),
+        };
+
+        setData(simulatedData);
+        //setData(result.data);
+
         console.log(deviceId);
       }
       setLoading(false);
